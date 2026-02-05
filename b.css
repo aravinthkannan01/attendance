@@ -1,0 +1,53 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    background-image: url("back01.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#loginPage {
+    border: 1px solid black;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+#loginPage button {
+    display: block;
+    margin: 0 auto;
+}
+#attendanceSystem{
+width:600px;
+}
+input{
+width:90%;
+padding:10px;
+border-radius:8px;
+margin-top:5px;
+}
+button{
+padding:10px 18px;
+margin:6px;
+border-radius:8px;
+background:#00c6ff;
+}
+.card{
+padding:10px;
+margin:10px;
+border-radius:10px;
+}
+table{
+width:100%;
+margin-top:10px;
+}
+th,td{
+border:1px solid #0e0101;
+padding:8px;
+}
+.dashboard{
+    border: 1px solid black;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+}

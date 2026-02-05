@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="b.css">
+    </head>
+<body>  
+    <script src="https://code.jquery.com/jquery-4.0.0.js"></script> 
+      <div id="loginPage" class="box">
+    <h2>Login</h2>
+    Username:
+    <input type="text" id="username"><br><br>
+    Password:
+    <input type="password" id="password"><br><br>
+    <button id="loginBtn">LOGIN</button>
+    </div>
+    <div class="dashboard">
+<div id="attendanceSystem" class="box" style="display:none;" >
+
+    <h2>STUDENT ATTENDANCE SYSTEM</h2>
+
+    <button id="studentBtn">Student</button>
+    <button id="attendanceBtn">Attendance</button>
+    <button id="summaryBtn">Summary</button>
+    <button id="logoutBtn">Logout</button>
+    <div id="studentSection" style="display:none;" >
+        <h3>Add Student</h3>
+        ID: <input type="number" id="sid">
+        Name: <input type="text" id="sname">
+        <button id="addStudentBtn">ADD</button>
+
+        <h3>Student List</h3>
+        <div id="studentList"></div>
+    </div>
+    <div id="attendanceSection" style="display:none;">
+        <h3>Mark Attendance</h3>
+        <div id="attendanceList"></div>
+    </div>
+    <div id="summarySection" style="display:none;" >
+        <h3>Attendance Summary</h3>
+        <table>
+        <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Date</th>
+        </tr>
+        <tbody id="summaryTable"></tbody>
+        </table>
+    </div>
+</div>
+</div>
+<script>
+    $("#loginBtn").on("click", function () {
+    if ($("#username").val() === "aravinth" && $("#password").val() === "3131") {
+        $("#loginPage").hide();
+        $("#attendanceSystem").show();
+    } else {
+        alert("Invalid Login");
+    }
+});
+$("#logoutBtn").on("click", function () {
+    $("#attendanceSystem").hide();
+    $("#loginPage").show();
+    $("#username").val("");
+    $("#password").val("");
+});
+$("#studentBtn").on("click", function () {
+    showSection("studentSection");
+});
+$("#attendanceBtn").on("click", function () {
+    showSection("attendanceSection");
+    loadAttendance();
+});
+$("#summaryBtn").on("click", function () {
+    showSection("summarySection");
+});
+function showSection(id) {
+    $("#studentSection, #attendanceSection, #summarySection").hide();
+    $("#" + id).show();
+}
+let students = [];
+let records = [];
+$("#addStudentBtn").on("click", function () {
+    let id = $("#sid").val();
+    let name = $("#sname").val();
+
+    students.push({ id: id, name: name });
+
+    $("#sid").val("");
+    $("#sname").val("");
+
+    loadStudents();
+});
+function loadStudents() {
+    $("#studentList").html("");
+     $.each(students, function (i, s) {
+        $("#studentList").append(`
+            <div class="card">
+                <strong>ID:</strong> ${s.id}<br>
+                <strong>Name:</strong> ${s.name}
+            </div>
+        `);
+         });
+         }
+
+function loadAttendance() {
+    $("#attendanceList").html("");
+      $.each(students, function (i, s) {
+        $("#attendanceList").append(`
+            <div class="card">
+                <strong>${s.name}</strong><br>
+                <button onclick="mark('${s.id}','Present')">Present</button>
+                <button onclick="mark('${s.id}','Absent')">Absent</button>
+            </div>
+        `);
+    });
+}
+    
+
+function mark(id, status) {
+    let today = new Date().toLocaleDateString();
+    records.push({ id, status, date: today });
+    addToSummary(id, status, today);
+    alert("Attendance Marked");
+}
+function addToSummary(id, status, date) {
+    let student = students.find(s => s.id == id);
+
+    $("#summaryTable").append(`
+        <tr>
+            <td>${student.id}</td>
+            <td>${student.name}</td>
+            <td>${status}</td>
+            <td>${date}</td>
+        </tr>
+    `);
+}
+</script>
+</body> 
+</html>
