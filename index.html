@@ -1,55 +1,87 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="b.css">
-    </head>
-<body>  
-    <script src="https://code.jquery.com/jquery-4.0.0.js"></script> 
-      <div id="loginPage" class="box">
+<head>
+<link rel="stylesheet" href="b.css">
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<div id="loginPage" class="box">
     <h2>Login</h2>
+    
     Username:
     <input type="text" id="username"><br><br>
     Password:
     <input type="password" id="password"><br><br>
-    <button id="loginBtn">LOGIN</button>
+    <button id="loginBtn">LOGIN</button><br><br>
+    <button id="openStudentLogin">Student Login</button>
     </div>
     <div class="dashboard">
-<div id="attendanceSystem" class="box" style="display:none;" >
-
+<div id="studentLoginPage" class="box" style="display:none;">
+    <h2>Student Login</h2>
+    Student ID:
+    <input type="number" id="studentLoginId"><br><br>
+    <button id="studentLoginBtn">Login</button><br><br>
+     <button id="backToAdminBtn">Back</button>
+    </div>
+<div id="attendanceSystem" class="box" style="display:none;">
     <h2>STUDENT ATTENDANCE SYSTEM</h2>
-
     <button id="studentBtn">Student</button>
     <button id="attendanceBtn">Attendance</button>
     <button id="summaryBtn">Summary</button>
     <button id="logoutBtn">Logout</button>
-    <div id="studentSection" style="display:none;" >
+    <div id="studentSection" style="display:none;">
         <h3>Add Student</h3>
         ID: <input type="number" id="sid">
         Name: <input type="text" id="sname">
         <button id="addStudentBtn">ADD</button>
-
         <h3>Student List</h3>
         <div id="studentList"></div>
     </div>
     <div id="attendanceSection" style="display:none;">
+        <h3>Select Date</h3>
+    <input type="date" id="attendanceDate">
+    <br><br>
         <h3>Mark Attendance</h3>
         <div id="attendanceList"></div>
     </div>
-    <div id="summarySection" style="display:none;" >
-        <h3>Attendance Summary</h3>
-        <table>
-        <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Date</th>
-        </tr>
+    <div id="summarySection" style="display:none;">
+    <h3>Attendance Summary</h3>
+    Select Date:
+<input type="date" id="filterDate">
+<button id="filterBtn">Search</button>
+<button id="showAllBtn">Show All</button>
+<br><br>
+Select Month:
+<input type="month" id="monthFilter">
+<button id="monthSearchBtn">Monthly Report</button>
+    <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
         <tbody id="summaryTable"></tbody>
-        </table>
+    </table>
     </div>
+</div>
+<div id="studentDashboard" class="box" style="display:none;">
+    <h2>My Attendance</h2>
+    <table>
+    <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Date</th>
+    </tr>
+    <tbody id="studentAttendanceTable"></tbody>
+    </table>
+    <br>
+    <button id="studentLogoutBtn">Logout</button>
 </div>
 </div>
 <script>
-    $("#loginBtn").on("click", function () {
+$("#loginBtn").on("click", function () {
     if ($("#username").val() === "aravinth" && $("#password").val() === "3131") {
         $("#loginPage").hide();
         $("#attendanceSystem").show();
@@ -60,8 +92,6 @@
 $("#logoutBtn").on("click", function () {
     $("#attendanceSystem").hide();
     $("#loginPage").show();
-    $("#username").val("");
-    $("#password").val("");
 });
 $("#studentBtn").on("click", function () {
     showSection("studentSection");
@@ -72,39 +102,40 @@ $("#attendanceBtn").on("click", function () {
 });
 $("#summaryBtn").on("click", function () {
     showSection("summarySection");
+    loadFullSummary();
 });
 function showSection(id) {
     $("#studentSection, #attendanceSection, #summarySection").hide();
     $("#" + id).show();
 }
+$("#showAllBtn").on("click", function () {
+    loadFullSummary();
+});
+
 let students = [];
 let records = [];
 $("#addStudentBtn").on("click", function () {
     let id = $("#sid").val();
     let name = $("#sname").val();
-
     students.push({ id: id, name: name });
-
     $("#sid").val("");
     $("#sname").val("");
-
     loadStudents();
 });
 function loadStudents() {
     $("#studentList").html("");
-     $.each(students, function (i, s) {
+    $.each(students, function (i, s) {
         $("#studentList").append(`
             <div class="card">
                 <strong>ID:</strong> ${s.id}<br>
                 <strong>Name:</strong> ${s.name}
             </div>
         `);
-         });
-         }
-
+    });
+}
 function loadAttendance() {
     $("#attendanceList").html("");
-      $.each(students, function (i, s) {
+    $.each(students, function (i, s) {
         $("#attendanceList").append(`
             <div class="card">
                 <strong>${s.name}</strong><br>
@@ -114,17 +145,32 @@ function loadAttendance() {
         `);
     });
 }
-    
-
+function loadFullSummary() {
+    $("#summaryTable").html("");
+    $.each(records, function (i, r) {
+        let student = students.find(s => s.id == r.id);
+        $("#summaryTable").append(`
+            <tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${r.status}</td>
+                <td>${r.date}</td>
+            </tr>
+        `);
+});
+}
 function mark(id, status) {
-    let today = new Date().toLocaleDateString();
-    records.push({ id, status, date: today });
-    addToSummary(id, status, today);
-    alert("Attendance Marked");
+    let selectedDate = $("#attendanceDate").val();
+    if (selectedDate == "") {
+        alert("Please select date first");
+        return;
+    }
+    records.push({ id, status, date: selectedDate });
+    addToSummary(id, status, selectedDate);
+   alert("Attendance Marked for " + selectedDate);
 }
 function addToSummary(id, status, date) {
     let student = students.find(s => s.id == id);
-
     $("#summaryTable").append(`
         <tr>
             <td>${student.id}</td>
@@ -134,6 +180,90 @@ function addToSummary(id, status, date) {
         </tr>
     `);
 }
+$("#openStudentLogin").on("click", function () {
+    $("#loginPage").hide();
+    $("#studentLoginPage").show();
+});
+
+$("#backToAdminBtn").on("click", function () {
+    $("#studentLoginPage").hide();
+    $("#loginPage").show();
+});
+let currentStudentId = null;
+$("#studentLoginBtn").on("click", function () {
+    let id = $("#studentLoginId").val();
+    let student = students.find(s => s.id == id);
+
+    if (student) {
+        currentStudentId = id;
+        $("#studentLoginPage").hide();
+        $("#studentDashboard").show();
+        loadStudentAttendance();
+    } else {
+        alert("Student not found");
+    }
+});
+$("#studentLogoutBtn").on("click", function () {
+    $("#studentDashboard").hide();
+    $("#loginPage").show();
+    $("#studentLoginId").val("");
+});
+function loadStudentAttendance() {
+    $("#studentAttendanceTable").html("");
+    let studentRecords = records.filter(r => r.id == currentStudentId);
+    let student = students.find(s => s.id == currentStudentId);
+    $.each(studentRecords, function (i, r) {
+        $("#studentAttendanceTable").append(`
+            <tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${r.status}</td>
+                <td>${r.date}</td>
+            </tr>
+        `);
+    });
+}
+$("#filterBtn").on("click", function () {
+    let selectedDate = $("#filterDate").val();
+    if (selectedDate == "") {
+        alert("Please select a date");
+        return;
+    }
+    $("#summaryTable").html("");
+    let filteredRecords = records.filter(r => r.date == selectedDate);
+    $.each(filteredRecords, function (i, r) {
+        let student = students.find(s => s.id == r.id);
+        $("#summaryTable").append(`
+            <tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${r.status}</td>
+                <td>${r.date}</td>
+            </tr>
+        `);
+ });
+});
+$("#monthSearchBtn").on("click", function () {
+    let selectedMonth = $("#monthFilter").val();
+    if (selectedMonth == "") {
+        alert("Please select a month");
+        return;
+    }
+    $("#summaryTable").html("");
+    let filteredRecords = records.filter(r => r.date.startsWith(selectedMonth));
+    $.each(filteredRecords, function (i, r) {
+        let student = students.find(s => s.id == r.id);
+        $("#summaryTable").append(`
+            <tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${r.status}</td>
+                <td>${r.date}</td>
+            </tr>
+        `);
+ });
+});
+
 </script>
-</body> 
+</body>
 </html>
