@@ -131,7 +131,7 @@ function loadStudents() {
                 <strong>Name:</strong> ${s.name}
             </div>
         `);
-    });
+});
 }
 function loadAttendance() {
     $("#attendanceList").html("");
@@ -143,7 +143,7 @@ function loadAttendance() {
                 <button onclick="mark('${s.id}','Absent')">Absent</button>
             </div>
         `);
-    });
+});
 }
 function loadFullSummary() {
     $("#summaryTable").html("");
@@ -164,7 +164,7 @@ function mark(id, status) {
     if (selectedDate == "") {
         alert("Please select date first");
         return;
-    }
+}
     records.push({ id, status, date: selectedDate });
     addToSummary(id, status, selectedDate);
    alert("Attendance Marked for " + selectedDate);
@@ -199,7 +199,7 @@ $("#studentLoginBtn").on("click", function () {
         $("#studentLoginPage").hide();
         $("#studentDashboard").show();
         loadStudentAttendance();
-    } else {
+} else {
         alert("Student not found");
     }
 });
@@ -221,14 +221,14 @@ function loadStudentAttendance() {
                 <td>${r.date}</td>
             </tr>
         `);
-    });
+});
 }
 $("#filterBtn").on("click", function () {
     let selectedDate = $("#filterDate").val();
     if (selectedDate == "") {
         alert("Please select a date");
         return;
-    }
+}
     $("#summaryTable").html("");
     let filteredRecords = records.filter(r => r.date == selectedDate);
     $.each(filteredRecords, function (i, r) {
@@ -248,7 +248,7 @@ $("#monthSearchBtn").on("click", function () {
     if (selectedMonth == "") {
         alert("Please select a month");
         return;
-    }
+}
     $("#summaryTable").html("");
     let filteredRecords = records.filter(r => r.date.startsWith(selectedMonth));
     $.each(filteredRecords, function (i, r) {
@@ -261,7 +261,7 @@ $("#monthSearchBtn").on("click", function () {
                 <td>${r.date}</td>
             </tr>
         `);
- });
+});
 });
 
 </script>
