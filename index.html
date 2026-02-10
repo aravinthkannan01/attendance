@@ -63,6 +63,19 @@ Select Month:
             </tr>
         <tbody id="summaryTable"></tbody>
     </table>
+    <h3>Aggregate Attendance</h3>
+
+<table>
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Total Present</th>
+    <th>Total Absent</th>
+    <th>Attendance %</th>
+</tr>
+<tbody id="aggregateTable"></tbody>
+</table>
+
     </div>
 </div>
 <div id="studentDashboard" class="box" style="display:none;">
@@ -103,6 +116,7 @@ $("#attendanceBtn").on("click", function () {
 $("#summaryBtn").on("click", function () {
     showSection("summarySection");
     loadFullSummary();
+     loadAggregate();
 });
 function showSection(id) {
     $("#studentSection, #attendanceSection, #summarySection").hide();
@@ -111,6 +125,8 @@ function showSection(id) {
 $("#showAllBtn").on("click", function () {
     loadFullSummary();
 });
+
+
 
 let students = [];
 let records = [];
@@ -263,6 +279,30 @@ $("#monthSearchBtn").on("click", function () {
         `);
 });
 });
+function loadAggregate() {
+    $("#aggregateTable").html("");
+    $.each(students, function (i, s) {
+        let studentRecords = records.filter(r => r.id == s.id);
+        let presentCount = studentRecords.filter(r => r.status == "Present").length;
+        let absentCount = studentRecords.filter(r => r.status == "Absent").length;
+        let total = presentCount + absentCount;
+        let percentage = 0;
+        if (total > 0) {
+            percentage = ((presentCount / total) * 100).toFixed(1);
+        }
+        $("#aggregateTable").append(`
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${presentCount}</td>
+                <td>${absentCount}</td>
+                <td>${percentage}%</td>
+            </tr>
+    `);
+
+});
+}
+
 
 </script>
 </body>
